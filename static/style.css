@@ -1,0 +1,79 @@
+.logincontent {
+    text-align: center;
+
+    margin: 100px auto;
+    height: 500px;
+    width: 400px;
+    color: rgb(139, 107, 68);
+    background-color: rgb(236, 245, 242);
+}
+
+.logintop {
+    
+}
+
+.loginbottom {
+    margin: 75px auto;
+}
+
+.textbox {
+    padding: 10px, 40px;
+    background-color: rgb(233, 230, 226);
+    border-radius: 5px;
+}
+
+::placeholder {
+    color: rgb(140, 107, 67);
+    text-align: center;
+    font-style: italic;
+}
+
+.btn {
+    padding: 10px 20px;
+    background-color: rgb(139, 107, 68);
+    border-radius: 10px;
+    font-weight: bold;
+    color: beige;
+
+}
+
+.registercontent {
+    text-align: center;
+
+    margin: 100px auto;
+    height: 500px;
+    width: 400px;
+    color: rgb(139, 107, 68);
+    background-color: rgb(236, 245, 242);
+}
+
+.registerbottom{
+    margin: 50px auto;
+}
+
+.registerbottom .btn {
+    margin-top: 20px;
+}
+
+
+.userContent td {
+    width: 150px;
+    text-align: center;
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.userContent {
+    margin-left: 25%;
+}
+
+.header {
+    display: flex;
+}
+
+.logout {
+    padding-left: 80%;
+}
+
+
+

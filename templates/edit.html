@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{%block title%}Edit User{%endblock title%}
+{%block content%}
+    <p>{{msg}}</p>
+    <div class ="col-lg-12">
+        <p>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-success">
+                    <strong>{{message}}</strong>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </p>
+    </div>
+    <form action="{{url_for('update')}}" method="post">
+        <input type="hidden" name="id" value="{{account['id']}}">
+        <div><input type="text" placeholder="Username" name="username" required value="{{account['username']}}"></div>
+        <div><input type="text" placeholder="Email" name="email" required value="{{account['email']}}"></div>
+        <div>
+           <a href="{{url_for('admin')}}"><button type="button">Cancel</button></a>
+            <button>Save</button>
+        </div>
+
+    </form>
+{%endblock%}

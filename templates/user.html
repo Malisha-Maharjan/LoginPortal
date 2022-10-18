@@ -1,0 +1,41 @@
+{%extends "layout.html"%}
+
+{%block title%}Users{%endblock title%}
+
+{%block content%}
+    <div class ="col-lg-12">
+        <p>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-success">
+                    <strong>{{message}}</strong>
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in account%}
+                <tr>
+                    <td>{{row['username']}}</td>
+                    <td>{{row['email']}}</td>
+                    <td>
+                    <a href={{url_for('edit', id=row['id'])}}><button>edit</button></a>
+                    <a href={{url_for('delete', id=row['id'])}}><button>delete</button></a>
+                    </form>
+                    </td>
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+{% endblock %}
