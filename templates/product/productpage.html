@@ -1,0 +1,10 @@
+{%extends 'layout.html'%}
+
+{%block title%}Product{%endblock%}
+
+{%block content%}
+<div class="main_content">
+    <a href={{url_for('add')}}> Add Product</a></br>
+    <a href={{url_for('display')}}>Display Product</a> 
+</div>
+{%endblock content%}
