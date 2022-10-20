@@ -69,11 +69,12 @@
 
 .header {
     display: flex;
+    justify-content: space-between;
 }
 
-.logout {
-    padding-left: 80%;
+.header-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
-
-
 

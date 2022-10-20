@@ -21,9 +21,12 @@
         <div><input type="text" placeholder="Username" name="username" required value="{{account['username']}}"></div>
         <div><input type="text" placeholder="Email" name="email" required value="{{account['email']}}"></div>
         <div>
-           <a href="{{url_for('admin')}}"><button type="button">Cancel</button></a>
-            <button>Save</button>
+        {% for role in roles%}
+            <input type="radio" {{'checked' if account['roleid'] == role['id'] else ''}} name="roleid" value={{role['id']}}>
+            <label>{{role['role']}}</label>
+        {%endfor%}
         </div>
-
+        <a href="{{url_for('admin')}}"><button type="button">Cancel</button></a>
+        <button>Save</button>
     </form>
 {%endblock%}

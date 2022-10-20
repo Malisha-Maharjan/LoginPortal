@@ -6,7 +6,7 @@
     <input type="hidden" name="id" value="{{product['id']}}" />
     <input type="hidden" name="productname" value="{{product['productname']}}" />
     <p>Are you sure you want to delete?</p>
-    <a href="{{url_for('display')}}"><button type="button">Cancel</button></a>
+    <a href="{{url_for('product')}}"><button type="button">Cancel</button></a>
     <button>Delete</button>
     <p>Product Name: {{product['productname']}}</p>
     <p><img  src="/{{product['productimage']}}" style="width:400px; height:400px;"></p>

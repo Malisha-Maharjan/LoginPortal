@@ -21,7 +21,9 @@
             <tr>
                 <th>Username</th>
                 <th>Email</th>
-                <th>Actions</th>
+                {%if 'admin' == session['role'] %}
+                    <th>Actions</th>
+                {%endif%}
             </tr>
         </thead>
         <tbody>
@@ -29,11 +31,13 @@
                 <tr>
                     <td>{{row['username']}}</td>
                     <td>{{row['email']}}</td>
-                    <td>
-                    <a href={{url_for('edit', id=row['id'])}}><button>edit</button></a>
-                    <a href={{url_for('delete', id=row['id'])}}><button>delete</button></a>
+                    {%if 'admin' == session['role']%}
+                        <td>
+                            <a href={{url_for('edit', id=row['id'])}}><button>edit</button></a>
+                            <a href={{url_for('delete', id=row['id'])}}><button>delete</button></a>
+                        </td>
+                    {%endif%}
                     </form>
-                    </td>
                 </tr>
             {% endfor%}
         </tbody>

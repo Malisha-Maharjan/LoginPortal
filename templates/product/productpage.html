@@ -5,6 +5,36 @@
 {%block content%}
 <div class="main_content">
     <a href={{url_for('add')}}> Add Product</a></br>
-    <a href={{url_for('display')}}>Display Product</a> 
+    {% if product != []%}
+        <table>
+            <thead>
+                <tr>
+                    <th>Product name</th>
+                    <th>Price</th>
+                    <th>Product image</th>
+                    <th>Actions </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in product%}
+                    <tr>
+                        <td>{{row['productname']}}</td>
+                        <td>Rs. {{row['price']}}</td>
+                        <td><img src="/{{row['productimage']}}" style="width:50px; height:50px;"></td>
+                        {% if session['role'] != 'customer'%}
+                        <td><a href={{url_for('productedit', id=row['id'])}}><button>edit</button></a>
+                            {% if session['role'] != 'staff'%}
+                                <a href={{url_for('deleteproduct', id=row['id'])}}><button>delete</button></a></td>
+                            {%endif%}
+                        {%else%}
+                            <td><a href="#"><button>Add to cart</button></a></td>
+                        {%endif%}
+                    </tr> 
+                {% endfor%}
+            </tbody>
+        </table>
+    {%else%}
+        <p> No Product to Display
+    {%endif%}
 </div>
 {%endblock content%}

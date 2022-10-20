@@ -1,33 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="stylesheet" href="../static/style.css" />
-    <a href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% extends 'layout.html'%}
 
-    <title>Admin</title>
-  </head>
-  <body>
-    <div class="header">
-        <h1>App</h1>
-        <div class="logout">
-          <form action="/logout" method="get">
-            <div class="msg">{{ msg }}</div>
-            <input type="submit" class="btn" value="Logout" />
-          </form>
-        </div>
-      </div>
-    <div class="admin"> 
-      <div class="sidebar">
-        <a href={{url_for('user')}}>User</a>
-        </div>
-        <br><a href={{url_for('product')}}>Product</a></br>
-        
-      </div>
+{%block title%} Admin {%endblock%}
+{%block content%}
 
-          
-      </div>
-    </div>
-  </body>
-</html>
+{%endblock%}
+

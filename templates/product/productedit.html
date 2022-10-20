@@ -3,13 +3,14 @@
 {%block title%}Edit Product{%endblock title%}
 {%block content%}
     </div>
-    <form action="{{url_for('productupdate')}}" method="post">
+    <form action="{{url_for('productupdate')}}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="id" value="{{product['id']}}">
         <div><input type="text" placeholder="Product Name" name="productname" required value="{{product['productname']}}"></div>
         <div><input type="number" min="0" step="0.01" placeholder="Price" name="price" required value="{{product['price']}}"></div>
+        <div><img src="/{{product['productimage']}}", style="width: 200px; height: 200px"></div>
         <div><input type="file" id="img" name="productimage" accept="image/*"></div>
         <div>
-           <a href="{{url_for('display')}}"><button type="button">Cancel</button></a>
+           <a href="{{url_for('product')}}"><button type="button">Cancel</button></a>
             <button>Save</button>
         </div>
     </form>

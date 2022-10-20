@@ -10,22 +10,28 @@
 <body>
     <div class="header">
         <h1>App</h1>
-        <div class="logout">
-          <form action="/logout" method="get">
-            <div class="msg">{{ msg }}</div>
-            <input type="submit" class="btn" value="Logout" />
-          </form>
-        </div>
+        <div class='header-right'>      
+          <div class="username">{{session['username']}}</div>
+          <div class="logout">
+            <form action="/logout" method="get">
+              <div class="msg">{{ msg }}</div>
+              <input type="submit" class="btn" value="Logout" />
+            </form>
+          </div>
+      </div>
+        
       </div>
     <div class="admin"> 
       <div class="sidebar">
+      {%if 'admin' == session['role']%}
         <a href={{url_for('user')}}>User</a>
-        </div>
+      {%endif%}
         <br><a href={{url_for('product')}}>Product</a></br>
         <div class="userContent">
           <h2>{{ self.title() }}</h2>
           {% block content%}{%endblock%}  
-        </div>  
+      
+        </div> 
       </div>          
       </div>
     </div>
