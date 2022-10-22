@@ -7,18 +7,14 @@ from flask_wtf import FlaskForm
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
+from db.user import get_user_with_role, get_user_by, get_user_id, get_all_user, get_user, get_user_with_id 
+from db.user import insert_user, update_user, delete_user
+from db.role import get_roles, get_roles_with_roleid
+from db.product import get_product, get_product_with_id, get_product_with_name
+from db.product import insert_product, update_product, delete_product
 
 UPLOAD_FOLDER = os.path.join('static', 'images')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    passwd="Malisha2001",
-    database="greekprofile",
-)
-
-cursor = db.cursor(dictionary=True, buffered=True)
 
 
 app = Flask(__name__)
@@ -38,10 +34,8 @@ def login():
         try:
             username = request.form['username']
             password = request.form['password']
-            cursor.execute(
-                'SELECT * FROM accounts a join roles r on a.roleid=r.id WHERE username = %s AND password = %s', (username, password, ))
-            account = cursor.fetchone()
-            print(account, file=sys.stdout)
+            print(username, file=sys.stdout)
+            account = get_user_with_role(username, password)
             if account:
                 session['username'] = username
                 session['role'] = account['role']
@@ -74,9 +68,7 @@ def register():
             username = request.form['username']
             password = request.form['password']
             email = request.form['email']
-            cursor.execute(
-                'SELECT * FROM accounts WHERE username = %s', (username, ))
-            account = cursor.fetchone()
+            account = get_user_by(username)
             if account:
                 msg = 'Account already exist! '
             elif not re.match(r'[A-za-z0-9]+', username):
@@ -84,16 +76,12 @@ def register():
             elif not re.match(r'[A-za-z0-9]+@[a-z]+.[a-z]{2,3}', email):
                 msg = 'Invalid email'
             else:
-                cursor.execute("SELECT id FROM roles WHERE role = 'customer'")
-                roles = cursor.fetchone()
-                cursor.execute(
-                    'INSERT INTO accounts (username, password, email, roleid) VALUES (%s, %s, %s, %s)', (username, password, email, roles['id'], ))
-                db.commit()
+                insert_user(username, password, email)
                 msg = 'You have successfully registered.'
         except Exception as e:
             msg = e.with_traceback(None)
-
     return render_template('user/register.html', msg=msg)
+
 
 
 @app.route('/admin')
@@ -101,20 +89,14 @@ def admin():
     msg = ''
     if not session.get('username'):
         return redirect(url_for('login'))
-    cursor.execute(
-        'SELECT * FROM accounts')
-    account = cursor.fetchall()
-    cursor.execute('SELECT * FROM roles')
-    roles = cursor.fetchall()
-    return render_template('user/admin.html', account=account, roles=roles)
+    return render_template('user/admin.html')
 
 
 @app.route('/user')
 def user():
     if session['role'] != 'admin':
         return redirect(url_for('unauthorized'))
-    cursor.execute('SELECT * FROM accounts')
-    account = cursor.fetchall()
+    account = get_all_user()
     return render_template('user/user.html', account=account)
 
 
@@ -126,12 +108,8 @@ def unauthorized():
 def edit(id):
     if session['role'] != 'admin':
         return redirect(url_for('unauthorized'))
-    # if request.method == 'GET':
-    cursor.execute(
-        'SELECT * FROM accounts WHERE id=%s', (id, ))
-    account = cursor.fetchone()
-    cursor.execute('SELECT * FROM roles')
-    roles = cursor.fetchall()
+    account = get_user(id)
+    roles = get_roles()
     print(roles, file=sys.stdout)
     return render_template('user/edit.html', account=account, roles=roles)
 
@@ -145,11 +123,8 @@ def update():
     email = request.form['email']
     id = request.form['id']
     roleid = request.form['roleid']
-    cursor.execute(
-        'SELECT * FROM accounts WHERE username=%s AND id <> %s', (username, id, ))
-    account = cursor.fetchone()
-    cursor.execute('SELECT * FROM roles')
-    roles = cursor.fetchall()
+    account = get_user_with_id(username, id)
+    roles = get_roles()
     if account and account['username']:
         msg = 'Username already existed.'
     if account and account['email']:
@@ -160,13 +135,10 @@ def update():
         msg = 'Invalid email'
     else:
         print(id, username, email, roleid, file=sys.stdout)
-        cursor.execute('UPDATE accounts SET username=%s, email=%s, roleid=%s WHERE id=%s',
-                       (username, email, roleid, id, ))
-        db.commit()
+        update_user(username, email, roleid, id)
         if username == session['username']:
             session['username'] = username
-            cursor.execute('SELECT role FROM roles where id=%s', (roleid, )) 
-            role = cursor.fetchone()
+            role = get_roles_with_roleid(roleid)
             if role:
                 session['role'] = role
         flash('The record has been successfully updated.')
@@ -179,9 +151,7 @@ def delete(id):
     if session['role'] != 'admin':
         return redirect(url_for('unauthorized'))
     # if request.method == 'GET':
-    cursor.execute(
-        'SELECT * FROM accounts WHERE id=%s', (id, ))
-    account = cursor.fetchone()
+    account = get_user(id)
     return render_template('user/delete.html', account=account)
 
 
@@ -189,29 +159,22 @@ def delete(id):
 def destroy():
     if session['role'] != 'admin':
         return redirect(url_for('unauthorized'))
-    # alert = ''
     print(request.method, file=sys.stdout)
     username = request.form['username']
-    cursor.execute('SELECT * FROM accounts WHERE username=%s', (username, ))
-    account = cursor.fetchone()
+    account = get_user_by(username)
     print('hi', account, file=sys.stdout)
     if account['username'] == session['username']:
         flash("Sorry!")
         return redirect(url_for('user'))
     else:
-
-        cursor.execute('DELETE FROM accounts WHERE username=%s',
-                       (username, ))
+        delete_user(username)
         flash("Successfully deleted!!")
-        db.commit()
-
         return redirect(url_for('user'))
 
 
 @app.route('/product')
 def product():
-    cursor.execute('SELECT * FROM products')
-    product = cursor.fetchall()
+    product = get_product()
     print(product, file=sys.stdout)
     return render_template('product/productpage.html', product=product)
 
@@ -227,22 +190,15 @@ def add():
             app.config['UPLOAD_FOLDER'], picture_filename))
         image_path = os.path.join(
             app.config['UPLOAD_FOLDER'], picture_filename)
-
-        cursor.execute(
-            'INSERT INTO products (productname, productimage, price) VALUES(%s, %s, %s)', (productname, image_path, price, ))
-        db.commit()
+        insert_product(productname, image_path, price)
         return redirect(url_for('product'))
 
     return render_template('product/add.html')
 
 
-
 @app.route('/productedit/<id>')
 def productedit(id):
-    cursor.execute('SELECT * FROM products WHERE id=%s', (id, ))
-    product = cursor.fetchone()
-    
-    print(product, file=sys.stdout)
+    product = get_product_with_id(id)
     return render_template('product/productedit.html', product=product)
 
 @app.route('/productupdate', methods=['POST'])
@@ -254,35 +210,25 @@ def productupdate():
     picture_filename = secure_filename(picture.filename)
     image_path = os.path.join(
         app.config['UPLOAD_FOLDER'], picture_filename)
-    picture.save(os.path.join(
-        app.config['UPLOAD_FOLDER'], picture_filename))
+    picture.save(image_path)
     
-    cursor.execute('UPDATE products SET productname=%s, price=%s, productimage=%s WHERE id=%s',
-                    (productname, price, image_path, id, ))
-    db.commit()
+    update_product(productname, price, image_path, id)
     return redirect(url_for('product'))
 
 @app.route('/deleteproduct/<id>')
 def deleteproduct(id):
-    # if request.method == 'GET':
-    cursor.execute(
-        'SELECT * FROM products WHERE id=%s', (id, ))
-    product = cursor.fetchone()
+    product = get_product_with_id(id)
     return render_template('product/deleteproduct.html', product=product)
 
 
 @app.route('/destroyproduct', methods=['POST'])
 def destroyproduct():
-    # alert = ''
     print(request.method, file=sys.stdout)
     productname = request.form['productname']
-    cursor.execute('SELECT * FROM products WHERE productname=%s', (productname, ))
-    product = cursor.fetchone()
+    product = get_product_with_name(productname)
     print(product, file=sys.stdout)
-    cursor.execute('DELETE FROM products WHERE productname=%s',
-                    (productname, ))
+    delete_product(productname)
     flash("Successfully deleted!!")
-    db.commit()
 
     return redirect(url_for('product'))
 
